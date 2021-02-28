@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private var mTimer: Timer?=null
     private var mTimerSec=0.0
     private var mHandler= Handler()
-    private var Times=0
+    private var TimesToCheck=0
     private var haveBeenClicked=0
 
 
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             idFst = cursor.getLong(fieldIndexFirst)
             Log.d("ANDROID", "URI : " + idFst.toString())
         }
-        if (cursor!!.moveToLast()){
+        if (cursor.moveToLast()){
             val fieldIndexLast=cursor.getColumnIndex(MediaStore.Images.Media._ID)
             idLst = cursor.getLong(fieldIndexLast)
             Log.d("ANDROID", "URI : " + idLst.toString())
@@ -67,14 +67,14 @@ class MainActivity : AppCompatActivity() {
 
         button1.setOnClickListener(){
             if (haveBeenClicked==0){
-                var fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                var id = cursor.getLong(fieldIndex)
+                val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                val id = cursor.getLong(fieldIndex)
                 if(id > (idLst-1)){
                     Log.d("UI_PARTS","here")
-                    cursor!!.moveToFirst()
+                    cursor.moveToFirst()
                     setImageHere(cursor)
                 }else{
-                    cursor!!.moveToNext()
+                    cursor.moveToNext()
                     setImageHere(cursor)
                 }
             }
@@ -82,15 +82,15 @@ class MainActivity : AppCompatActivity() {
         button2.setOnClickListener(){
             if(haveBeenClicked==0){
                 Log.d("UI_PARTS","Backward")
-                var fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                var id = cursor.getLong(fieldIndex)
+                val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                val id = cursor.getLong(fieldIndex)
                 Log.d("ANDROID", "URI B: " + id.toString())
                 if((idFst+1)>id) {
                     Log.d("UI_PARTS","I am here")
-                    cursor!!.moveToLast()
+                    cursor.moveToLast()
                     setImageHere(cursor)
                 }else{
-                    cursor!!.moveToPrevious()
+                    cursor.moveToPrevious()
                     setImageHere(cursor)
                 }
             }
@@ -100,51 +100,37 @@ class MainActivity : AppCompatActivity() {
             Log.d("UI_PARTS","Play/Stop")
             haveBeenClicked=1
             Log.d("UI_PARTS","HaveBeenClick=$haveBeenClicked")
-            if(Times==0){
+
+            val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+            val id = cursor.getLong(fieldIndex)
+
+            if(TimesToCheck==0){
                 button3.text="停止"
                 if(mTimer==null) {
                     mTimer = Timer()
                     mTimer!!.schedule(object : TimerTask() {
                         override fun run() {
                             mTimerSec += 2.0
-                            mHandler.post {
-                                timer1.text = String.format("%.1f", mTimerSec)
-                            }
-                            val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                            val id = cursor.getLong(fieldIndex)
-                            Log.d("UI_PARTS","here$idLst")
                             if(id > (idLst-1)){
                                 Log.d("UI_PARTS","1sthere")
-                                cursor!!.moveToFirst()
-                                var fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-
-                                var id = cursor.getLong(fieldIndex)
-                                Log.d("UI_PARTS","1sthereID=$id")
-                                var imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-                                imageView.setImageURI(imageUri)
-                                Log.d("ANDROID", "URI : " + id.toString())
+                                cursor.moveToFirst()
+                                setImageHere(cursor)
                             }else{
-                                cursor!!.moveToNext()
-                                Log.d("UI_PARTS","2ndhere")
-                                var fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                                var id = cursor.getLong(fieldIndex)
-                                Log.d("UI_PARTS","2ndhereID=$id")
-                                var imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-                                imageView.setImageURI(imageUri)
-                                Log.d("ANDROID", "URI : " + id.toString())
+                                cursor.moveToNext()
+                                setImageHere(cursor)
                             }
                             Log.d("UI_PARTS","GoThruhere")
                         }
                     }, 2000, 2000)
                 }
-                Times=1
-            }else if(Times==1){
+                TimesToCheck=1
+            }else if(TimesToCheck==1){
                 button3.text="再生"
                 if(mTimer!=null){
                     mTimer!!.cancel()
                     mTimer=null
                 }
-                Times=0
+                TimesToCheck=0
                 haveBeenClicked=0
             }
 
@@ -173,3 +159,4 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
+
