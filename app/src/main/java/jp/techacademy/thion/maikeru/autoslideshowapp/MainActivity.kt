@@ -1,8 +1,10 @@
 package jp.techacademy.thion.maikeru.autoslideshowapp
 
 import android.Manifest
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -65,44 +67,31 @@ class MainActivity : AppCompatActivity() {
 
         button1.setOnClickListener(){
             if (haveBeenClicked==0){
-                val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                val id = cursor.getLong(fieldIndex)
-                if(id > idLst-1){
+                var fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                var id = cursor.getLong(fieldIndex)
+                if(id > (idLst-1)){
                     Log.d("UI_PARTS","here")
                     cursor!!.moveToFirst()
-                    val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                    val id = cursor.getLong(fieldIndex)
-                    val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-                    imageView.setImageURI(imageUri)
-                    Log.d("ANDROID", "URI : " + id.toString())
+                    setImageHere(cursor)
                 }else{
                     cursor!!.moveToNext()
-                    val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                    val id = cursor.getLong(fieldIndex)
-                    val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-                    imageView.setImageURI(imageUri)
-                    Log.d("ANDROID", "URI : " + id.toString())
+                    setImageHere(cursor)
                 }
             }
-
-
         }
         button2.setOnClickListener(){
             if(haveBeenClicked==0){
                 Log.d("UI_PARTS","Backward")
-                val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                val id = cursor.getLong(fieldIndex)
+                var fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                var id = cursor.getLong(fieldIndex)
                 Log.d("ANDROID", "URI B: " + id.toString())
                 if((idFst+1)>id) {
                     Log.d("UI_PARTS","I am here")
                     cursor!!.moveToLast()
+                    setImageHere(cursor)
                 }else{
                     cursor!!.moveToPrevious()
-                    val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                    val id = cursor.getLong(fieldIndex)
-                    Log.d("ANDROID", "URI : " + id.toString())
-                    val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-                    imageView.setImageURI(imageUri)
+                    setImageHere(cursor)
                 }
             }
 
@@ -119,24 +108,28 @@ class MainActivity : AppCompatActivity() {
                         override fun run() {
                             mTimerSec += 2.0
                             mHandler.post {
-                                timer.text = String.format("%.1f", mTimerSec)
+                                timer1.text = String.format("%.1f", mTimerSec)
                             }
                             val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
                             val id = cursor.getLong(fieldIndex)
-/*                            Log.d("UI_PARTS","here$idLst")*/
+                            Log.d("UI_PARTS","here$idLst")
                             if(id > (idLst-1)){
-                                Log.d("UI_PARTS","here")
+                                Log.d("UI_PARTS","1sthere")
                                 cursor!!.moveToFirst()
-                                val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                                val id = cursor.getLong(fieldIndex)
-                                val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+                                var fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+
+                                var id = cursor.getLong(fieldIndex)
+                                Log.d("UI_PARTS","1sthereID=$id")
+                                var imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
                                 imageView.setImageURI(imageUri)
                                 Log.d("ANDROID", "URI : " + id.toString())
                             }else{
                                 cursor!!.moveToNext()
-                                val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                                val id = cursor.getLong(fieldIndex)
-                                val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+                                Log.d("UI_PARTS","2ndhere")
+                                var fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                                var id = cursor.getLong(fieldIndex)
+                                Log.d("UI_PARTS","2ndhereID=$id")
+                                var imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
                                 imageView.setImageURI(imageUri)
                                 Log.d("ANDROID", "URI : " + id.toString())
                             }
@@ -156,7 +149,17 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
     }
+
+    fun setImageHere(cursor: Cursor){
+        val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+        val id = cursor.getLong(fieldIndex)
+        val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+        imageView.setImageURI(imageUri)
+        Log.d("ANDROID", "URI : " + id.toString())
+    }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
