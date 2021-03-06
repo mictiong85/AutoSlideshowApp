@@ -101,25 +101,37 @@ class MainActivity : AppCompatActivity() {
             haveBeenClicked=1
             Log.d("UI_PARTS","HaveBeenClick=$haveBeenClicked")
 
-            val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-            val id = cursor.getLong(fieldIndex)
-
             if(TimesToCheck==0){
                 button3.text="停止"
                 if(mTimer==null) {
                     mTimer = Timer()
                     mTimer!!.schedule(object : TimerTask() {
                         override fun run() {
+                            val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                            val id = cursor.getLong(fieldIndex)
+                            Log.d("UI_PARTS","Ini now is $id")
                             mTimerSec += 2.0
+
                             if(id > (idLst-1)){
-                                Log.d("UI_PARTS","1sthere")
                                 cursor.moveToFirst()
-                                setImageHere(cursor)
+                                getLocation(cursor)
+                                Log.d("UI_PARTS","1sthere")
+                                Log.d("UI_PARTS","Reset ID is $id")
+                                val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+                                mHandler.post{
+                                    imageView.setImageURI(imageUri)
+                                }
                             }else{
                                 cursor.moveToNext()
-                                setImageHere(cursor)
+                                getLocation(cursor)
+                                Log.d("UI_PARTS","2ndhere")
+                                Log.d("UI_PARTS","Next ID is $id")
+                                val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+                                mHandler.post{
+                                    imageView.setImageURI(imageUri)
+                                }
                             }
-                            Log.d("UI_PARTS","GoThruhere")
+                            Log.d("UI_PARTS","3rdher")
                         }
                     }, 2000, 2000)
                 }
@@ -146,6 +158,10 @@ class MainActivity : AppCompatActivity() {
         Log.d("ANDROID", "URI : " + id.toString())
     }
 
+    fun getLocation(cursor: Cursor){
+        val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+        val id = cursor.getLong(fieldIndex)
+    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
