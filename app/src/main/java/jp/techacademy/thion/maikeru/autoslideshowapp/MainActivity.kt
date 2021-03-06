@@ -70,7 +70,6 @@ class MainActivity : AppCompatActivity() {
                 val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
                 val id = cursor.getLong(fieldIndex)
                 if(id > (idLst-1)){
-                    Log.d("UI_PARTS","here")
                     cursor.moveToFirst()
                     setImageHere(cursor)
                 }else{
@@ -97,9 +96,7 @@ class MainActivity : AppCompatActivity() {
 
         }
         button3.setOnClickListener(){
-            Log.d("UI_PARTS","Play/Stop")
             haveBeenClicked=1
-            Log.d("UI_PARTS","HaveBeenClick=$haveBeenClicked")
 
             if(TimesToCheck==0){
                 button3.text="停止"
@@ -110,11 +107,13 @@ class MainActivity : AppCompatActivity() {
                             val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
                             val id = cursor.getLong(fieldIndex)
                             Log.d("UI_PARTS","Ini now is $id")
+
                             mTimerSec += 2.0
 
                             if(id > (idLst-1)){
                                 cursor.moveToFirst()
-                                getLocation(cursor)
+                                val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                                val id = cursor.getLong(fieldIndex)
                                 Log.d("UI_PARTS","1sthere")
                                 Log.d("UI_PARTS","Reset ID is $id")
                                 val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
@@ -123,7 +122,8 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }else{
                                 cursor.moveToNext()
-                                getLocation(cursor)
+                                val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                                val id = cursor.getLong(fieldIndex)
                                 Log.d("UI_PARTS","2ndhere")
                                 Log.d("UI_PARTS","Next ID is $id")
                                 val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
@@ -131,7 +131,6 @@ class MainActivity : AppCompatActivity() {
                                     imageView.setImageURI(imageUri)
                                 }
                             }
-                            Log.d("UI_PARTS","3rdher")
                         }
                     }, 2000, 2000)
                 }
@@ -158,10 +157,6 @@ class MainActivity : AppCompatActivity() {
         Log.d("ANDROID", "URI : " + id.toString())
     }
 
-    fun getLocation(cursor: Cursor){
-        val fieldIndex=cursor.getColumnIndex(MediaStore.Images.Media._ID)
-        val id = cursor.getLong(fieldIndex)
-    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
