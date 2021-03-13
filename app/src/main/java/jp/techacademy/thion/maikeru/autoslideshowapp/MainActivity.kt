@@ -29,21 +29,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-        button.setOnClickListener {
             // パーミッションの許可状態を確認する
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    // 許可されている
-                    Log.d("ANDROID", "許可されている")
-                } else {
-                    Log.d("ANDROID", "許可されていない")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                getContentsInfo()
+            } else {
+                Log.d("ANDROID", "許可されていない")
                     // 許可されていないので許可ダイアログを表示する
-                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSIONS_REQUEST_CODE)
-                }
+                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSIONS_REQUEST_CODE)
             }
+        }else{
+            getContentsInfo()
         }
 
+    }
+
+    private fun getContentsInfo(){
         val resolver = contentResolver
         val cursor = resolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // データの種類
@@ -163,8 +164,7 @@ class MainActivity : AppCompatActivity() {
             PERMISSIONS_REQUEST_CODE ->
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("ANDROID", "許可された")
-                } else {
-                    Log.d("ANDROID", "許可されなかった")
+                    getContentsInfo()
                 }
         }
     }
